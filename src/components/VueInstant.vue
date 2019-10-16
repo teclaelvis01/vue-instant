@@ -3,21 +3,21 @@
     <div class="main">
       <form novalidate="novalidate" onsubmit="return false;" :class="getFormClass">
         <div role="search" :class="getClassWrapper">
-          <input type="search" name="search" :placeholder="getPlaceholder" autocomplete="off" required="required" :class="getClassInputPlaceholder" tabindex="-1">
-          <input :disabled="disabled" @click="emitClickInput" @keyup='changeText' v-model='textVal' type="search" :name="name" placeholder="" autocomplete="off" required="required" :class="getClassInput" :autofocus="autofocus">
-          <button @click="emitClickButton" type="submit" :class="getClassSubmit" tabindex="-1">
+          <input type="search" name="search" :placeholder="getPlaceholder" autocomplete="off" required="required" :class="getClassInputPlaceholder+ ' ' +inputClass" tabindex="-1">
+          <input :disabled="disabled" @click="emitClickInput" @keyup='changeText' v-model='textVal' type="search" :name="name" placeholder="" autocomplete="off" required="required" :class="getClassInput+ ' ' +inputClass" :autofocus="autofocus">
+          <button v-if="!hideSearchBotton" @click="emitClickButton" type="submit" :class="getClassSubmit" tabindex="-1">
               <svg role="img" aria-label="Search">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="getSVGSearch"></use>
               </svg>
             </button>
-          <button @click="reset" type="reset" :class="getClassReset" tabindex="-1">
+          <button :style="resetStyle" @click="reset" type="reset" :class="getClassReset" tabindex="-1">
               <svg role="img" aria-label="Reset">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="getSVGClear"></use>
               </svg>
             </button>
           <div v-if="modeIsFull" class='el-input-group__append'>
             <ul v-on-clickaway="away" v-if="suggestionsIsVisible && showSuggestions" class="vue-instant__suggestions">
-              <li @click="selectedAction(index)" v-for="(item, index) in similiarData" :class="getClassHighlighted(index)">{{item[suggestionAttribute]}}</li>
+              <li @click="selectedAction(item,index)" v-for="(item, index) in similiarData" :class="getClassHighlighted(index)">{{item[suggestionAttribute]}}</li>
             </ul>
           </div>
         </div>
@@ -48,6 +48,18 @@
       'value': {
         type: String,
         required: true
+      },
+      'inputClass': {
+        type: String,
+        default:''
+      },
+      'resetStyle': {
+        type: Object,
+        default:{}
+      },
+      'hideSearchBotton': {
+        type: Boolean,
+        default:false
       },
       'suggestions': {
         type: Array,
@@ -171,7 +183,8 @@
             svgClear: '#sbx-icon-clear-4',
             highlighClass: 'highlighted__custom'
           }
-        ]
+        ],
+        item_selected:null
       }
     },
     watch: {
@@ -186,6 +199,9 @@
           this.placeholderVal = val
         }
       }
+    },
+    mounted: function(){
+      
     },
     computed: {
       getPlaceholder() {
@@ -287,7 +303,12 @@
         this.clearSimilarData()
         this.emitEnter()
       },
-      selectedAction(index) {
+      selectedAction(item,index) {
+
+        if(item[this.suggestionAttribute]==this.textVal){
+          this.$emit('onitem',item);
+        }
+
         this.highlightedIndex = index
         this.setFinalTextValue()
         this.clearPlaceholder()
@@ -295,6 +316,9 @@
         this.emitSelected()
       },
       addRegister(o) {
+        if(o[this.suggestionAttribute]==this.textVal){
+          this.$emit('onitem',o);
+        }
         if (this.isSimilar(o) && this.textValIsNotEmpty()) {
           this.addSuggestion(o)
         }

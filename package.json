@@ -1,10 +1,10 @@
 {
-  "name": "vue-instant",
+  "name": "vue-autocomplete2",
   "description": "vue instant allows you to easily create custom search controls with auto suggestions for your vue 2 application.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": {
-    "name": "santiago",
-    "email": "santiago.blanco.vilchez@gmail.com"
+    "name": "Elvis Reyes",
+    "email": "teclaelvis01@gmail.com"
   },
   "keywords": [
     "vue",
@@ -56,6 +56,7 @@
     "webpack-merge": "^1.1.2"
   },
   "dependencies": {
+    "s": "^1.0.0",
     "vue": "^2.1.8",
     "vue-clickaway": "2.1.0"
   }
